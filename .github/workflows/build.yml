@@ -1,32 +1,19 @@
 name: Build
-
 on:
   push:
     branches:
       - main
-
+  pull_request:
+    types: [opened, synchronize, reopened]
 jobs:
-  build:
-    name: Build and analyze with SonarQube
-    runs-on: macos-latest
-
+  sonarqube:
+    name: SonarQube
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-
-      - name: Run SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v4
-        with:
-          args: ""  # ✅ This prevents the 'scanner_args[@]: unbound variable' error
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-      # Optional: Enable if you want to fail the pipeline on failed Quality Gate
-      # - name: Check SonarQube Quality Gate
-      #   uses: SonarSource/sonarqube-quality-gate-action@v1
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
