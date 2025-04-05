@@ -7,25 +7,25 @@ on:
 
 jobs:
   build:
-    name: Build and analyze
+    name: Build and analyze with SonarQube
     runs-on: macos-latest
 
     steps:
-      - name: Checkout source code
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: SonarQube Scan
+      - name: Run SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4
         with:
-          args: ""   # ✅ Prevents 'unbound variable' error
+          args: ""  # ✅ This prevents the 'scanner_args[@]: unbound variable' error
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      # Optional: Quality Gate (fail pipeline if gate fails)
-      # - name: SonarQube Quality Gate Check
+      # Optional: Enable if you want to fail the pipeline on failed Quality Gate
+      # - name: Check SonarQube Quality Gate
       #   uses: SonarSource/sonarqube-quality-gate-action@v1
       #   timeout-minutes: 5
       #   env:
